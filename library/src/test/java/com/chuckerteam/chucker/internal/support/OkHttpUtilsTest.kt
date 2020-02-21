@@ -64,7 +64,7 @@ class OkHttpUtilsTest {
     @Test
     fun responseIsGzipped_withOtherEncoding_returnsTrue() {
         val mockResponse = mockk<Response>()
-        every { mockResponse.headers() } returns Headers.of("Content-Encoding", "gzip")
+        every { mockResponse.headers } returns Headers.of("Content-Encoding", "gzip")
 
         assertTrue(mockResponse.isGzipped)
     }
@@ -72,7 +72,7 @@ class OkHttpUtilsTest {
     @Test
     fun responseIsGzipped_withOtherEncoding_returnsFalse() {
         val mockResponse = mockk<Response>()
-        every { mockResponse.headers() } returns Headers.of("Content-Encoding", "identity")
+        every { mockResponse.headers } returns Headers.of("Content-Encoding", "identity")
 
         assertFalse(mockResponse.isGzipped)
     }
@@ -80,7 +80,7 @@ class OkHttpUtilsTest {
     @Test
     fun requestIsGzipped_withOtherEncoding_returnsTrue() {
         val mockRequest = mockk<Request>()
-        every { mockRequest.headers() } returns Headers.of("Content-Encoding", "gzip")
+        every { mockRequest.headers } returns Headers.of("Content-Encoding", "gzip")
 
         assertTrue(mockRequest.isGzipped)
     }
@@ -88,7 +88,7 @@ class OkHttpUtilsTest {
     @Test
     fun requestIsGzipped_withOtherEncoding_returnsFalse() {
         val mockRequest = mockk<Request>()
-        every { mockRequest.headers() } returns Headers.of("Content-Encoding", "identity")
+        every { mockRequest.headers } returns Headers.of("Content-Encoding", "identity")
 
         assertFalse(mockRequest.isGzipped)
     }

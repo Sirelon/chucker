@@ -72,24 +72,24 @@ class ChuckerInterceptor @JvmOverloads constructor(
      * Processes a [Request] and populates corresponding fields of a [HttpTransaction].
      */
     private fun processRequest(request: Request, transaction: HttpTransaction) {
-        val requestBody = request.body()
+        val requestBody = request.body
 
-        val encodingIsSupported = io.bodyHasSupportedEncoding(request.headers().get(CONTENT_ENCODING))
+        val encodingIsSupported = io.bodyHasSupportedEncoding(request.headers.get(CONTENT_ENCODING))
 
         transaction.apply {
-            setRequestHeaders(request.headers())
-            populateUrl(request.url())
+            setRequestHeaders(request.headers)
+            populateUrl(request.url)
 
             isRequestBodyPlainText = encodingIsSupported
             requestDate = System.currentTimeMillis()
-            method = request.method()
+            method = request.method
             requestContentType = requestBody?.contentType()?.toString()
             requestContentLength = requestBody?.contentLength() ?: 0L
         }
 
         if (requestBody != null && encodingIsSupported) {
             val source = io.getNativeSource(Buffer(), request.isGzipped)
-            val buffer = source.buffer()
+            val buffer = source.buffer
             requestBody.writeTo(buffer)
             var charset: Charset = UTF8
             val contentType = requestBody.contentType()
@@ -109,24 +109,24 @@ class ChuckerInterceptor @JvmOverloads constructor(
      * Processes a [Response] and populates corresponding fields of a [HttpTransaction].
      */
     private fun processResponse(response: Response, transaction: HttpTransaction): Response {
-        val responseEncodingIsSupported = io.bodyHasSupportedEncoding(response.headers().get(CONTENT_ENCODING))
+        val responseEncodingIsSupported = io.bodyHasSupportedEncoding(response.headers.get(CONTENT_ENCODING))
 
         transaction.apply {
             // includes headers added later in the chain
-            setRequestHeaders(filterHeaders(response.request().headers()))
-            setResponseHeaders(filterHeaders(response.headers()))
+            setRequestHeaders(filterHeaders(response.request.headers))
+            setResponseHeaders(filterHeaders(response.headers))
 
             isResponseBodyPlainText = responseEncodingIsSupported
-            requestDate = response.sentRequestAtMillis()
-            responseDate = response.receivedResponseAtMillis()
-            protocol = response.protocol().toString()
-            responseCode = response.code()
-            responseMessage = response.message()
+            requestDate = response.sentRequestAtMillis
+            responseDate = response.receivedResponseAtMillis
+            protocol = response.protocol.toString()
+            responseCode = response.code
+            responseMessage = response.message
 
             responseContentType = response.contentType
             responseContentLength = response.contentLenght
 
-            tookMs = (response.receivedResponseAtMillis() - response.sentRequestAtMillis())
+            tookMs = (response.receivedResponseAtMillis - response.sentRequestAtMillis)
         }
 
         return if (responseEncodingIsSupported) {
@@ -140,7 +140,7 @@ class ChuckerInterceptor @JvmOverloads constructor(
      * Processes a [ResponseBody] and populates corresponding fields of a [HttpTransaction].
      */
     private fun processResponseBody(response: Response, transaction: HttpTransaction): Response {
-        val responseBody = response.body() ?: return response
+        val responseBody = response.body ?: return response
 
         val contentType = responseBody.contentType()
         val charset = contentType?.charset(UTF8) ?: UTF8
@@ -164,7 +164,7 @@ class ChuckerInterceptor @JvmOverloads constructor(
             val isImageContentType =
                 (contentType?.toString()?.contains(CONTENT_TYPE_IMAGE, ignoreCase = true) == true)
 
-            if (isImageContentType && buffer.size() < MAX_BLOB_SIZE) {
+            if (isImageContentType && buffer.size < MAX_BLOB_SIZE) {
                 transaction.responseImageData = buffer.clone().readByteArray()
             }
         }

@@ -24,13 +24,13 @@ internal val Response.contentType: String?
 /** Checks if the OkHttp response uses gzip encoding. */
 internal val Response.isGzipped: Boolean
     get() {
-        return this.headers().containsGzip
+        return this.headers.containsGzip
     }
 
 /** Checks if the OkHttp request uses gzip encoding. */
 internal val Request.isGzipped: Boolean
     get() {
-        return this.headers().containsGzip
+        return this.headers.containsGzip
     }
 
 private val Headers.containsGzip: Boolean

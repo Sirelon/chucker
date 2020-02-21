@@ -9,6 +9,7 @@ import okio.Buffer
 import okio.BufferedSource
 import okio.GzipSource
 import okio.Okio
+import okio.buffer
 
 private const val PREFIX_SIZE = 64L
 private const val CODE_POINT_SIZE = 16
@@ -22,7 +23,7 @@ internal class IOUtils(private val context: Context) {
     fun isPlaintext(buffer: Buffer): Boolean {
         try {
             val prefix = Buffer()
-            val byteCount = if (buffer.size() < PREFIX_SIZE) buffer.size() else PREFIX_SIZE
+            val byteCount = if (buffer.size < PREFIX_SIZE) buffer.size else PREFIX_SIZE
             buffer.copyTo(prefix, 0, byteCount)
             for (i in 0 until CODE_POINT_SIZE) {
                 if (prefix.exhausted()) {
@@ -40,7 +41,7 @@ internal class IOUtils(private val context: Context) {
     }
 
     fun readFromBuffer(buffer: Buffer, charset: Charset, maxContentLength: Long): String {
-        val bufferSize = buffer.size()
+        val bufferSize = buffer.size
         val maxBytes = min(bufferSize, maxContentLength)
         var body = ""
         try {
@@ -57,7 +58,7 @@ internal class IOUtils(private val context: Context) {
 
     fun getNativeSource(input: BufferedSource, isGzipped: Boolean): BufferedSource = if (isGzipped) {
         val source = GzipSource(input)
-        Okio.buffer(source)
+        source.buffer()
     } else {
         input
     }

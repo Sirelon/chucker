@@ -179,7 +179,7 @@ internal class HttpTransaction(
 
     private fun toHttpHeaderList(headers: Headers): List<HttpHeader> {
         val httpHeaders = ArrayList<HttpHeader>()
-        for (i in 0 until headers.size()) {
+        for (i in 0 until headers.size) {
             httpHeaders.add(HttpHeader(headers.name(i), headers.value(i)))
         }
         return httpHeaders
@@ -209,9 +209,9 @@ internal class HttpTransaction(
 
     fun populateUrl(url: HttpUrl): HttpTransaction {
         this.url = url.toString()
-        host = url.host()
-        path = ("/${url.pathSegments().joinToString("/")}${url.query()?.let { "?$it" } ?: ""}")
-        scheme = url.scheme()
+        host = url.host
+        path = ("/${url.pathSegments.joinToString("/")}${url.query?.let { "?$it" } ?: ""}")
+        scheme = url.scheme
         return this
     }
 }
